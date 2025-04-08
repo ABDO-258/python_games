@@ -21,7 +21,9 @@ pathimg = join('images', 'player.png')
 print(pathimg)
 player_surf = pygame.image.load(pathimg).convert_alpha()
 player_rect = player_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
-player_direction = 1
+# player_direction = 1
+player_direction = pygame.math.Vector2(20, -10)
+player_speed = 10
 
 starimgpath = join('images', 'star.png')
 star_surf = pygame.image.load(starimgpath).convert_alpha()
@@ -50,9 +52,13 @@ while running:
     display_surface.blit(laser_surf, laser_rect)
 
     # player movement
-    player_rect.x += player_direction * 0.4
-    if player_rect.right > WINDOW_WIDTH or player_rect.left < 0:
-        player_direction *= -1
+    player_rect.center += player_direction
+
+
+
+    # player_rect.x += player_direction * 0.4
+    # if player_rect.right > WINDOW_WIDTH or player_rect.left < 0:
+    #     player_direction *= -1
 
     # if player_rect.right < WINDOW_WIDTH:
     #     player_rect.left += 0.2
