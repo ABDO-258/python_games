@@ -2,6 +2,15 @@ import pygame
 from os.path import join
 import random
 
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load(join('images', 'player.png')).convert_alpha()
+        self.rect = self.image.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+
 #general setup
 pygame.init()
 WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
@@ -15,6 +24,8 @@ clock = pygame.time.Clock()
 surf = pygame.Surface((100,200))
 surf.fill('orange')
 x = 100
+
+player = Player()
 
 # importing an image
 pathimg = join('images', 'player.png')
@@ -49,11 +60,11 @@ while running:
         #     print (event.pos)
         
     # input 
-    keys = pygame.key.get_pressed()
-    player_direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
-    player_direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
-    player_direction.normalize() if player_direction else player_direction
-    player_rect.center += player_direction * player_speed * dt
+    # keys = pygame.key.get_pressed()
+    # player_direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
+    # player_direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
+    # player_direction.normalize() if player_direction else player_direction
+    # player_rect.center += player_direction * player_speed * dt
 
 
     # draw game
@@ -80,8 +91,10 @@ while running:
 
     # if player_rect.right < WINDOW_WIDTH:
     #     player_rect.left += 0.2
-    display_surface.blit(player_surf, player_rect)
-    
+    # display_surface.blit(player_surf, player_rect)
+    display_surface.blit(player.image, player.rect)
+
+
     pygame.display.flip()
 
 pygame.quit()
