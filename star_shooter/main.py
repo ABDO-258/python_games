@@ -5,10 +5,29 @@ import random
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, groups):
+        super().__init__(groups)
         self.image = pygame.image.load(join('images', 'player.png')).convert_alpha()
         self.rect = self.image.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+        self.direction =  pygame.Vector2()
+        self.speed = 300
+
+    def update(self, dt):
+        keys = pygame.key.get_pressed()
+        self.direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
+        self.direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
+        self.direction.normalize() if self.direction else self.direction
+        self.rect.center += self.direction * self.speed * dt
+
+        recent_kyes = pygame.key. get_just_pressed()
+        if recent_kyes[pygame.K_SPACE]:
+            print('fire laser')
+
+class Star(pygame.sprite.Sprite):
+    def __init__(self, groups, surf):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_frect(center = (random.randint(0,WINDOW_WIDTH), random.randint(0,WINDOW_HEIGHT)))
 
 
 #general setup
@@ -21,24 +40,29 @@ clock = pygame.time.Clock()
 
 
 # plain surface
-surf = pygame.Surface((100,200))
-surf.fill('orange')
-x = 100
+# surf = pygame.Surface((100,200))
+# surf.fill('orange')
+# x = 100
 
-player = Player()
+allsprites = pygame.sprite.Group()
+star_surf = pygame.image.load(join('images', 'star.png')).convert_alpha()
+for i in range(20):
+    Star(allsprites, star_surf)
+player = Player(allsprites)
+
 
 # importing an image
-pathimg = join('images', 'player.png')
-print(pathimg)
-player_surf = pygame.image.load(pathimg).convert_alpha()
-player_rect = player_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
-# player_direction = 1
-player_direction = pygame.math.Vector2()
-player_speed = 300
+# pathimg = join('images', 'player.png')
+# print(pathimg)
+# player_surf = pygame.image.load(pathimg).convert_alpha()
+# player_rect = player_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+# # player_direction = 1
+# player_direction = pygame.math.Vector2()
+# player_speed = 300
 
-starimgpath = join('images', 'star.png')
-star_surf = pygame.image.load(starimgpath).convert_alpha()
-star_position = [(random.randint(0,WINDOW_WIDTH), random.randint(0,WINDOW_HEIGHT)) for i in range(20)]
+# starimgpath = join('images', 'star.png')
+# star_surf = pygame.image.load(starimgpath).convert_alpha()
+# star_position = [(random.randint(0,WINDOW_WIDTH), random.randint(0,WINDOW_HEIGHT)) for i in range(20)]
 
 meteor_surf = pygame.image.load(join ('images', 'meteor.png')).convert_alpha()
 meteor_rect = meteor_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
@@ -58,7 +82,7 @@ while running:
         #     print('the key 1 is pressed')
         # if event.type == pygame.MOUSEMOTION:
         #     print (event.pos)
-        
+    allsprites.update(dt)  
     # input 
     # keys = pygame.key.get_pressed()
     # player_direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
@@ -70,11 +94,10 @@ while running:
     # draw game
     #
     display_surface.fill(color='darkgray')
-    for pos in star_position:
-        display_surface.blit(star_surf, pos)
+    
    
-    display_surface.blit(meteor_surf, meteor_rect)
-    display_surface.blit(laser_surf, laser_rect)
+    # display_surface.blit(meteor_surf, meteor_rect)
+    # display_surface.blit(laser_surf, laser_rect)
 
     # player movement`
     # if player_rect.bottom > WINDOW_HEIGHT or player_rect.top < 0:
@@ -92,7 +115,9 @@ while running:
     # if player_rect.right < WINDOW_WIDTH:
     #     player_rect.left += 0.2
     # display_surface.blit(player_surf, player_rect)
-    display_surface.blit(player.image, player.rect)
+    # display_surface.blit(player.image, player.rect)
+
+    allsprites.draw(display_surface)
 
 
     pygame.display.flip()
